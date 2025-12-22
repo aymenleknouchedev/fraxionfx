@@ -19,9 +19,9 @@ class UserSeeder extends Seeder
 
         // Create a test user for login
         User::factory()->create([
-            'name' => 'Aymen Leknouche',
-            'email' => 'aymenleknouche.dv@gmail.com',
-            'password' => bcrypt('annexedrrh//5rm'),
+            'name' => 'fraxionfx',
+            'email' => 'admin@fraxionfx.com',
+            'password' => bcrypt('V9!qR2@Lx7#MZ4aP'),
         ]);
     }
 }
