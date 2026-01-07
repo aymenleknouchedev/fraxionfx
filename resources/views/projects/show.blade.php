@@ -239,12 +239,12 @@
 
 @if ($project->model_file)
     <!-- Three.js and loaders for 3D preview -->
-    <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/examples/js/controls/OrbitControls.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/examples/js/loaders/OBJLoader.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/examples/js/libs/inflate.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/examples/js/loaders/FBXLoader.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.149.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.149.0/examples/js/loaders/OBJLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.149.0/examples/js/libs/inflate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.149.0/examples/js/loaders/FBXLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.149.0/examples/js/loaders/GLTFLoader.js"></script>
 
     <script>
         (function () {
@@ -256,6 +256,13 @@
             if (typeof THREE === 'undefined') {
                 if (fallback) {
                     fallback.innerHTML = '<div class="text-center"><div class="mb-1">3D viewer not available.</div><div class="small">Viewer library could not be loaded. Check your internet connection.</div></div>';
+                }
+                return;
+            }
+
+            if (!THREE.OrbitControls) {
+                if (fallback) {
+                    fallback.innerHTML = '<div class="text-center"><div class="mb-1">3D controls not available.</div><div class="small">OrbitControls could not be initialized. Please refresh the page.</div></div>';
                 }
                 return;
             }
