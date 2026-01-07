@@ -96,10 +96,20 @@
                         <div class="row g-3">
                             @foreach ($project->images as $image)
                                 <div class="col-6 col-md-4">
-                                    <div class="position-relative rounded-3 overflow-hidden" style="background: #111;">
-                                        <img src="{{ asset('storage/' . $image->image) }}" alt="{{ $image->caption ?: $project->title }} image"
+                                    @php
+                                        $thumbUrl = asset('storage/' . $image->image);
+                                        $thumbAlt = $image->caption ?: ($project->title . ' image');
+                                    @endphp
+                                    <button type="button"
+                                            class="position-relative rounded-3 overflow-hidden border-0 p-0 w-100 bg-transparent"
+                                            style="background: #111; cursor: zoom-in;"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#projectImageModal"
+                                            data-image="{{ $thumbUrl }}"
+                                            data-alt="{{ $thumbAlt }}">
+                                        <img src="{{ $thumbUrl }}" alt="{{ $thumbAlt }}"
                                              class="img-fluid w-100" style="object-fit: cover; height: 160px;">
-                                    </div>
+                                    </button>
                                 </div>
                             @endforeach
                         </div>
@@ -224,8 +234,45 @@
     </div>
 </footer>
 
+<!-- Fullscreen image modal for project gallery -->
+<div class="modal fade" id="projectImageModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+        <div class="modal-content bg-transparent border-0">
+            <div class="modal-header border-0">
+                <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body d-flex justify-content-center align-items-center p-0 pb-4">
+                <img id="projectImageModalImg" src="" alt="Project image"
+                     class="img-fluid rounded-4 shadow-lg" style="max-height: 85vh; object-fit: contain;">
+            </div>
+        </div>
+    </div>
+    
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var imageModal = document.getElementById('projectImageModal');
+        if (!imageModal) return;
+
+        var modalImg = document.getElementById('projectImageModalImg');
+
+        imageModal.addEventListener('show.bs.modal', function (event) {
+            var trigger = event.relatedTarget;
+            if (!trigger || !modalImg) return;
+
+            var imgSrc = trigger.getAttribute('data-image');
+            var imgAlt = trigger.getAttribute('data-alt') || '';
+
+            if (imgSrc) {
+                modalImg.src = imgSrc;
+                modalImg.alt = imgAlt;
+            }
+        });
+    });
+</script>
 </body>
 </html>
