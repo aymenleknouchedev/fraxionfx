@@ -190,12 +190,51 @@
                 </div>
 
                 @if ($project->video_url || $project->video)
+                    @php
+                        $rawUrl = $project->video_url;
+                        $embedUrl = null;
+
+                        if ($rawUrl) {
+                            $parsed = parse_url($rawUrl);
+                            $host = $parsed['host'] ?? '';
+
+                            // YouTube long URL: https://www.youtube.com/watch?v=ID
+                            if (str_contains($host, 'youtube.com') && isset($parsed['query'])) {
+                                parse_str($parsed['query'], $queryParams);
+                                if (!empty($queryParams['v'])) {
+                                    $videoId = $queryParams['v'];
+                                    $embedUrl = 'https://www.youtube.com/embed/' . $videoId;
+                                }
+                            }
+
+                            // YouTube short URL: https://youtu.be/ID
+                            if (!$embedUrl && str_contains($host, 'youtu.be') && !empty($parsed['path'])) {
+                                $videoId = ltrim($parsed['path'], '/');
+                                $embedUrl = 'https://www.youtube.com/embed/' . $videoId;
+                            }
+
+                            // Vimeo standard URL: https://vimeo.com/ID
+                            if (!$embedUrl && str_contains($host, 'vimeo.com') && !empty($parsed['path'])) {
+                                $segments = explode('/', trim($parsed['path'], '/'));
+                                $videoId = end($segments);
+                                if ($videoId) {
+                                    $embedUrl = 'https://player.vimeo.com/video/' . $videoId;
+                                }
+                            }
+
+                            // If already an embed/player URL or unknown provider, use as-is
+                            if (!$embedUrl) {
+                                $embedUrl = $rawUrl;
+                            }
+                        }
+                    @endphp
+
                     <div class="mb-4 p-4 rounded-4" style="background: #05040a; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 18px 60px rgba(15,23,42,0.7);">
                         <h2 class="h5 mb-3">Project Video</h2>
 
-                        @if ($project->video_url)
+                        @if ($embedUrl)
                             <div class="ratio ratio-16x9 mb-3">
-                                <iframe src="{{ $project->video_url }}" title="{{ $project->title }} video"
+                                <iframe src="{{ $embedUrl }}" title="{{ $project->title }} video"
                                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                                         allowfullscreen loading="lazy"></iframe>
                             </div>
