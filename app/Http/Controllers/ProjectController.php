@@ -28,7 +28,7 @@ class ProjectController extends Controller
         // Validate input
         $validated = $request->validate([
             'title' => 'required|string|max:100',
-            'description' => 'nullable|string|max:500',
+            'description' => 'nullable|string|max:5000',
             'summary' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,gif,webp|max:10240',
             'video_url' => 'nullable|url|max:255',
