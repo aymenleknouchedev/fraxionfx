@@ -246,32 +246,6 @@
                         style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; min-height: 140px; font-family: inherit; box-sizing: border-box; resize: vertical;">{{ old('summary') }}</textarea>
                 </div>
 
-                <!-- 3D Project File -->
-                <div style="margin-bottom: 2rem;">
-                    <label for="model_file" style="display: block; font-weight: bold; color: var(--blue); margin-bottom: 0.5rem;">
-                        3D Project File (Optional)
-                    </label>
-                    <input type="file"
-                        name="model_file"
-                        id="model_file"
-                        accept=".fbx,.obj,.blend,.gltf,.glb"
-                        style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; box-sizing: border-box;">
-                    <small style="color: #666; display: block; margin-top: 0.25rem;">Supported for web preview: GLTF/GLB, OBJ, FBX. BLEND files will upload but cannot be previewed directly.</small>
-                </div>
-
-                <!-- 3D Embed Code (e.g., Sketchfab) -->
-                <div style="margin-bottom: 2rem;">
-                    <label for="model_embed" style="display: block; font-weight: bold; color: var(--blue); margin-bottom: 0.5rem;">
-                        3D Embed Code (Optional)
-                    </label>
-                    <textarea
-                        name="model_embed"
-                        id="model_embed"
-                        placeholder="Paste 3D viewer embed code here (e.g., Sketchfab iframe)"
-                        style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 0.9rem; min-height: 100px; font-family: monospace; box-sizing: border-box; resize: vertical;">{{ old('model_embed') }}</textarea>
-                    <small style="color: #666; display: block; margin-top: 0.25rem;">Example: the full &lt;iframe&gt; / embed snippet from Sketchfab or other 3D hosting.</small>
-                </div>
-
                 <!-- Short Description -->
                 <div style="margin-bottom: 2rem;">
                     <label for="description" style="display: block; font-weight: bold; color: var(--blue); margin-bottom: 0.5rem;">
@@ -376,7 +350,6 @@
                                     data-client-name="{{ $project->client_name }}"
                                     data-category="{{ $project->category }}"
                                     data-video-url="{{ $project->video_url }}"
-                                    data-model-embed="{{ e($project->model_embed) }}"
                                     data-skills='@json($project->skills->pluck("id"))'
                                     style="flex: 1; background: var(--blue); color: white; padding: 0.5rem; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9rem; text-decoration: none;">
                                     <i class="fas fa-edit"></i> Edit
@@ -517,17 +490,6 @@
                     </div>
                 </div>
 
-                <div>
-                    <label for="editModelEmbed" style="display: block; font-weight: bold; color: var(--blue); margin-bottom: 0.5rem;">
-                        3D Embed Code
-                    </label>
-                    <textarea
-                        id="editModelEmbed"
-                        name="model_embed"
-                        style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 0.9rem; min-height: 100px; font-family: monospace; box-sizing: border-box; resize: vertical;"></textarea>
-                    <small style="color: #666; display: block; margin-top: 0.25rem;">Paste the embed HTML from Sketchfab or similar (iframe snippet).</small>
-                </div>
-
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
                     <div>
                         <label for="editClientName" style="display: block; font-weight: bold; color: var(--blue); margin-bottom: 0.5rem;">
@@ -612,9 +574,9 @@
                     <input type="file"
                         id="editModelFile"
                         name="model_file"
-                        accept=".fbx,.obj,.blend,.gltf,.glb"
+                        accept=".fbx,.obj,.blend"
                         style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; box-sizing: border-box;">
-                    <small style="color: #666; display: block; margin-top: 0.25rem;">Upload a new GLTF/GLB, OBJ, or FBX to replace the current one (BLEND files will upload but cannot be previewed directly; leave empty to keep current).</small>
+                    <small style="color: #666; display: block; margin-top: 0.25rem;">Upload a new FBX/OBJ/BLEND file to replace the current one (leave empty to keep current).</small>
                 </div>
 
                 <div>
@@ -687,7 +649,6 @@
                 editProgressValue.textContent = progressValue + '%';
                 editProgressBarFill.style.width = progressValue + '%';
             }
-            document.getElementById('editModelEmbed').value = button.dataset.modelEmbed || '';
             document.getElementById('editClientName').value = button.dataset.clientName || '';
             document.getElementById('editCategory').value = button.dataset.category || '';
             document.getElementById('editVideoUrl').value = button.dataset.videoUrl || '';

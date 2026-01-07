@@ -147,29 +147,16 @@
                             </dd>
                         @endif
 
+                        @if ($project->model_file)
+                            <dt class="col-4 text-white-50">3D File</dt>
+                            <dd class="col-8">
+                                <a href="{{ asset('storage/' . $project->model_file) }}" class="btn btn-sm btn-outline-light rounded-pill px-3" target="_blank" rel="noopener">
+                                    <i class="fas fa-download me-1"></i> Download 3D Asset
+                                </a>
+                            </dd>
+                        @endif
                     </dl>
                 </div>
-
-                @if ($project->model_embed)
-                    <div class="mb-4 p-4 rounded-4" style="background: #020617; border: 1px solid rgba(148,163,184,0.4); box-shadow: 0 18px 60px rgba(15,23,42,0.9);">
-                        <h2 class="h5 mb-3">3D Model Preview</h2>
-                        <div class="ratio ratio-16x9 mb-2">
-                            {!! $project->model_embed !!}
-                        </div>
-                        <small class="text-white-50 d-block mt-1">Interactive 3D viewer embedded from an external service (e.g., Sketchfab).</small>
-                    </div>
-                @elseif ($project->model_file)
-                    <div class="mb-4 p-4 rounded-4" style="background: #020617; border: 1px solid rgba(148,163,184,0.4); box-shadow: 0 18px 60px rgba(15,23,42,0.9);">
-                        <h2 class="h5 mb-3">3D Model Preview</h2>
-                        <div id="modelViewerContainer" style="width: 100%; height: 320px; border-radius: 18px; background: radial-gradient(circle at top, rgba(56,189,248,0.18), transparent 55%), radial-gradient(circle at bottom, rgba(129,140,248,0.25), transparent 55%); overflow: hidden; position: relative;">
-                            <div id="modelViewerFallback" class="d-flex flex-column align-items-center justify-content-center h-100 text-white-50 small">
-                                <div class="spinner-border text-light mb-2" role="status" style="width: 1.5rem; height: 1.5rem;"></div>
-                                <div>Loading 3D model...</div>
-                            </div>
-                        </div>
-                        <small class="text-white-50 d-block mt-2">Drag to orbit, scroll to zoom the model.</small>
-                    </div>
-                @endif
 
                 @if ($project->video_url || $project->video)
                     @php
@@ -244,156 +231,6 @@
         <a href="{{ url('/') }}" class="text-decoration-none text-white-50">Back to home</a>
     </div>
 </footer>
-
-@if ($project->model_file && ! $project->model_embed)
-    <!-- Three.js module-based viewer for 3D preview -->
-    <script type="module">
-        import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.159.0/build/three.module.js';
-        import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.159.0/examples/jsm/controls/OrbitControls.js';
-        import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.159.0/examples/jsm/loaders/GLTFLoader.js';
-        import { FBXLoader } from 'https://cdn.jsdelivr.net/npm/three@0.159.0/examples/jsm/loaders/FBXLoader.js';
-        import { OBJLoader } from 'https://cdn.jsdelivr.net/npm/three@0.159.0/examples/jsm/loaders/OBJLoader.js';
-
-        (function () {
-            const container = document.getElementById('modelViewerContainer');
-            const fallback = document.getElementById('modelViewerFallback');
-
-            if (!container) return;
-
-            const modelUrl = @json(asset('storage/' . $project->model_file));
-
-            // Robustly extract extension from URL/path (ignoring query/hash)
-            let ext = '';
-            try {
-                const urlObj = new URL(modelUrl, window.location.origin);
-                const pathname = urlObj.pathname || '';
-                const filename = pathname.split('/').pop() || '';
-                const dotIndex = filename.lastIndexOf('.');
-                if (dotIndex !== -1 && dotIndex < filename.length - 1) {
-                    ext = filename.substring(dotIndex + 1).toLowerCase();
-                }
-            } catch (e) {
-                const clean = modelUrl.split(/[?#]/)[0];
-                const filename = clean.split('/').pop() || '';
-                const dotIndex = filename.lastIndexOf('.');
-                if (dotIndex !== -1 && dotIndex < filename.length - 1) {
-                    ext = filename.substring(dotIndex + 1).toLowerCase();
-                }
-            }
-
-            console.log('3D model URL:', modelUrl, 'detected ext:', ext);
-
-            const scene = new THREE.Scene();
-            scene.background = null;
-
-            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-            renderer.setPixelRatio(window.devicePixelRatio || 1);
-            renderer.setSize(container.clientWidth, container.clientHeight);
-            container.appendChild(renderer.domElement);
-
-            const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-            camera.position.set(2.5, 2.0, 3.0);
-
-            let controls = null;
-            try {
-                controls = new OrbitControls(camera, renderer.domElement);
-                controls.enableDamping = true;
-                controls.dampingFactor = 0.08;
-                controls.enablePan = false;
-            } catch (e) {
-                console.warn('OrbitControls could not be initialized:', e);
-                controls = null;
-            }
-
-            const hemiLight = new THREE.HemisphereLight(0xffffff, 0x111827, 0.9);
-            scene.add(hemiLight);
-            const dirLight = new THREE.DirectionalLight(0xffffff, 0.7);
-            dirLight.position.set(3, 6, 4);
-            scene.add(dirLight);
-
-            let modelLoadedFlag = false;
-
-            function centerAndScale(object) {
-                const box = new THREE.Box3().setFromObject(object);
-                const size = new THREE.Vector3();
-                const center = new THREE.Vector3();
-                box.getSize(size);
-                box.getCenter(center);
-
-                object.position.sub(center);
-
-                const maxDim = Math.max(size.x, size.y, size.z) || 1;
-                const scale = 1.8 / maxDim;
-                object.scale.setScalar(scale);
-            }
-
-            function onModelLoaded(object) {
-                modelLoadedFlag = true;
-                if (fallback) fallback.style.display = 'none';
-
-                const root = new THREE.Group();
-                root.add(object);
-                centerAndScale(root);
-                scene.add(root);
-
-                animate();
-            }
-
-            function onModelError(message) {
-                modelLoadedFlag = true;
-                if (fallback) {
-                    fallback.innerHTML = '<div class="text-center"><div class="mb-1">3D preview not available.</div><div class="small">' + (message || 'The model format may not be supported in the browser.') + '</div></div>';
-                }
-            }
-
-            // Safety timeout: if nothing happens within 15s, show an error
-            setTimeout(function () {
-                if (!modelLoadedFlag) {
-                    onModelError('Timed out loading 3D model. Check that the file exists, is reachable under /storage, and uses OBJ/FBX/GLTF/GLB format.');
-                }
-            }, 15000);
-
-            if (ext === 'obj') {
-                const loader = new OBJLoader();
-                loader.load(modelUrl, onModelLoaded, undefined, function () { onModelError('Could not load OBJ model.'); });
-            } else if (ext === 'fbx') {
-                const loader = new FBXLoader();
-                loader.load(modelUrl, onModelLoaded, undefined, function () { onModelError('Could not load FBX model.'); });
-            } else if (ext === 'gltf' || ext === 'glb') {
-                const loader = new GLTFLoader();
-                loader.load(modelUrl, function (gltf) {
-                    if (gltf && gltf.scene) {
-                        onModelLoaded(gltf.scene);
-                    } else {
-                        onModelError('GLTF/GLB model loaded, but no scene was found.');
-                    }
-                }, undefined, function () { onModelError('Could not load GLTF/GLB model.'); });
-            } else if (ext === 'blend') {
-                onModelError('BLEND files cannot be previewed in the browser viewer.');
-            } else {
-                onModelError('Unsupported model format for web preview.');
-                return;
-            }
-
-            function animate() {
-                requestAnimationFrame(animate);
-                if (controls) {
-                    controls.update();
-                }
-                renderer.render(scene, camera);
-            }
-
-            window.addEventListener('resize', function () {
-                const width = container.clientWidth;
-                const height = container.clientHeight;
-                if (!width || !height) return;
-                camera.aspect = width / height;
-                camera.updateProjectionMatrix();
-                renderer.setSize(width, height);
-            });
-        })();
-    </script>
-@endif
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
