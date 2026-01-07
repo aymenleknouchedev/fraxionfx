@@ -238,27 +238,19 @@
 </footer>
 
 @if ($project->model_file)
-    <!-- Three.js and loaders for 3D preview -->
-    <script src="https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.149.0/examples/js/controls/OrbitControls.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.149.0/examples/js/loaders/OBJLoader.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.149.0/examples/js/libs/inflate.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.149.0/examples/js/loaders/FBXLoader.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.149.0/examples/js/loaders/GLTFLoader.js"></script>
+    <!-- Three.js module-based viewer for 3D preview -->
+    <script type="module">
+        import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.159.0/build/three.module.js';
+        import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.159.0/examples/jsm/controls/OrbitControls.js';
+        import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.159.0/examples/jsm/loaders/GLTFLoader.js';
+        import { FBXLoader } from 'https://cdn.jsdelivr.net/npm/three@0.159.0/examples/jsm/loaders/FBXLoader.js';
+        import { OBJLoader } from 'https://cdn.jsdelivr.net/npm/three@0.159.0/examples/jsm/loaders/OBJLoader.js';
 
-    <script>
         (function () {
             const container = document.getElementById('modelViewerContainer');
             const fallback = document.getElementById('modelViewerFallback');
 
             if (!container) return;
-
-            if (typeof THREE === 'undefined') {
-                if (fallback) {
-                    fallback.innerHTML = '<div class="text-center"><div class="mb-1">3D viewer not available.</div><div class="small">Viewer library could not be loaded. Check your internet connection.</div></div>';
-                }
-                return;
-            }
 
             const modelUrl = @json(asset('storage/' . $project->model_file));
 
@@ -294,12 +286,10 @@
 
             let controls = null;
             try {
-                if (THREE.OrbitControls) {
-                    controls = new THREE.OrbitControls(camera, renderer.domElement);
-                    controls.enableDamping = true;
-                    controls.dampingFactor = 0.08;
-                    controls.enablePan = false;
-                }
+                controls = new OrbitControls(camera, renderer.domElement);
+                controls.enableDamping = true;
+                controls.dampingFactor = 0.08;
+                controls.enablePan = false;
             } catch (e) {
                 console.warn('OrbitControls could not be initialized:', e);
                 controls = null;
@@ -342,14 +332,14 @@
                 }
             }
 
-            if (ext === 'obj' && THREE.OBJLoader) {
-                const loader = new THREE.OBJLoader();
+            if (ext === 'obj') {
+                const loader = new OBJLoader();
                 loader.load(modelUrl, onModelLoaded, undefined, function () { onModelError('Could not load OBJ model.'); });
-            } else if (ext === 'fbx' && THREE.FBXLoader) {
-                const loader = new THREE.FBXLoader();
+            } else if (ext === 'fbx') {
+                const loader = new FBXLoader();
                 loader.load(modelUrl, onModelLoaded, undefined, function () { onModelError('Could not load FBX model.'); });
-            } else if ((ext === 'gltf' || ext === 'glb') && THREE.GLTFLoader) {
-                const loader = new THREE.GLTFLoader();
+            } else if (ext === 'gltf' || ext === 'glb') {
+                const loader = new GLTFLoader();
                 loader.load(modelUrl, function (gltf) {
                     if (gltf && gltf.scene) {
                         onModelLoaded(gltf.scene);
