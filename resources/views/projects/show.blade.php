@@ -23,44 +23,11 @@
 <body>
 
     <nav id="header-nav" class="navbar navbar-expand-lg py-4" data-bs-theme="dark">
-        <div class="container-fluid padding-side">
-            <button class="navbar-toggler shadow-none" type="button" data-bs-toggle="offcanvas"
-                data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar"
-                aria-labelledby="offcanvasNavbarLabel">
-                <div class="offcanvas-header">
-                    <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menu</h5>
-                    <button type="button" class="btn-close text-reset shadow-none" data-bs-dismiss="offcanvas"
-                        aria-label="Close"></button>
-                </div>
-                <div class="offcanvas-body">
-                    <ul class="navbar-nav text-center align-items-center justify-content-center flex-grow-1 w-100">
-                        <li class="nav-item">
-                            <a class="nav-link pe-lg-5" href="{{ url('/#hero') }}">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link pe-lg-5" href="{{ url('/#achievements') }}">Skills</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link pe-lg-5" href="{{ url('/#portfolio') }}">Portfolio</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link pe-lg-5" href="{{ url('/#testimonial') }}">Reviews</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link fw-bold border-bottom border-2 border-primary" href="{{ url('/#contact') }}">Contact us</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="d-none d-lg-flex align-items-center gap-3">
-                <a href="{{ url('/') }}" class="btn btn-sm btn-outline-light rounded-pill px-3">
-                    <i class="fas fa-arrow-left me-1"></i> Back to portfolio
-                </a>
-            </div>
+        <div class="container-fluid padding-side d-flex justify-content-between align-items-center">
+            <a href="{{ url('/') }}" class="navbar-brand fw-bold text-white d-flex align-items-center gap-2">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back to home</span>
+            </a>
         </div>
     </nav>
 
