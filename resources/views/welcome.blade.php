@@ -587,6 +587,8 @@
 
                         <div class="col-md-6 col-lg-4 {{ $filterClass }}" data-aos="fade-up" data-aos-delay="{{ $loop->index * 100 }}">
 
+                            <a href="{{ route('projects.show', $project) }}" class="text-decoration-none text-white d-block h-100">
+
                             <div class="project-card h-100 rounded-4 overflow-hidden"
                                 style="background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%); border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s ease;">
 
@@ -613,20 +615,17 @@
 
                                 <div class="p-4">
 
-                                    <h2 class="fw-bold mb-2">
-
-                                        <a href="{{ route('projects.show', $project) }}" class="text-decoration-none text-white">{{ $project->title }}</a>
-
-                                    </h2>
+                                    <h2 class="fw-bold mb-2">{{ $project->title }}</h2>
 
                                     <p class="text-white-50 mb-3" style="font-size: 0.9rem;">{{ $project->description ?? 'Project description' }}</p>
 
-                                    <a href="{{ route('projects.show', $project) }}" class="text-white text-decoration-none fw-semibold"
-                                        style="font-size: 0.9rem;">View Project Details</a>
+                                    <span class="text-white text-decoration-none fw-semibold" style="font-size: 0.9rem;">View Project Details</span>
 
                                 </div>
 
                             </div>
+
+                            </a>
 
                         </div>
 
