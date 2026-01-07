@@ -248,7 +248,16 @@
     <script>
         (function () {
             const container = document.getElementById('modelViewerContainer');
-            if (!container || typeof THREE === 'undefined') return;
+            const fallback = document.getElementById('modelViewerFallback');
+
+            if (!container) return;
+
+            if (typeof THREE === 'undefined') {
+                if (fallback) {
+                    fallback.innerHTML = '<div class="text-center"><div class="mb-1">3D viewer not available.</div><div class="small">Viewer library could not be loaded. Check your internet connection.</div></div>';
+                }
+                return;
+            }
 
             const modelUrl = @json(asset('storage/' . $project->model_file));
             const ext = modelUrl.split('.').pop().toLowerCase();
@@ -275,8 +284,6 @@
             dirLight.position.set(3, 6, 4);
             scene.add(dirLight);
 
-            const fallback = document.getElementById('modelViewerFallback');
-
             function centerAndScale(object) {
                 const box = new THREE.Box3().setFromObject(object);
                 const size = new THREE.Vector3();
@@ -302,20 +309,22 @@
                 animate();
             }
 
-            function onModelError() {
+            function onModelError(message) {
                 if (fallback) {
-                    fallback.innerHTML = '<div class="text-center"><div class="mb-1">3D preview not available.</div><div class="small">The model format may not be supported in the browser.</div></div>';
+                    fallback.innerHTML = '<div class="text-center"><div class="mb-1">3D preview not available.</div><div class="small">' + (message || 'The model format may not be supported in the browser.') + '</div></div>';
                 }
             }
 
             if (ext === 'obj' && THREE.OBJLoader) {
                 const loader = new THREE.OBJLoader();
-                loader.load(modelUrl, onModelLoaded, undefined, onModelError);
+                loader.load(modelUrl, onModelLoaded, undefined, function () { onModelError('Could not load OBJ model.'); });
             } else if (ext === 'fbx' && THREE.FBXLoader) {
                 const loader = new THREE.FBXLoader();
-                loader.load(modelUrl, onModelLoaded, undefined, onModelError);
+                loader.load(modelUrl, onModelLoaded, undefined, function () { onModelError('Could not load FBX model.'); });
+            } else if (ext === 'blend') {
+                onModelError('BLEND files cannot be previewed in the browser viewer.');
             } else {
-                onModelError();
+                onModelError('Unsupported model format for web preview.');
                 return;
             }
 
