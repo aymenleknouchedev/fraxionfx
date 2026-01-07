@@ -261,7 +261,25 @@
             }
 
             const modelUrl = @json(asset('storage/' . $project->model_file));
-            const ext = modelUrl.split('.').pop().toLowerCase();
+
+            // Robustly extract extension from URL/path (ignoring query/hash)
+            let ext = '';
+            try {
+                const urlObj = new URL(modelUrl, window.location.origin);
+                const pathname = urlObj.pathname || '';
+                const filename = pathname.split('/').pop() || '';
+                const dotIndex = filename.lastIndexOf('.');
+                if (dotIndex !== -1 && dotIndex < filename.length - 1) {
+                    ext = filename.substring(dotIndex + 1).toLowerCase();
+                }
+            } catch (e) {
+                const clean = modelUrl.split(/[?#]/)[0];
+                const filename = clean.split('/').pop() || '';
+                const dotIndex = filename.lastIndexOf('.');
+                if (dotIndex !== -1 && dotIndex < filename.length - 1) {
+                    ext = filename.substring(dotIndex + 1).toLowerCase();
+                }
+            }
 
             const scene = new THREE.Scene();
             scene.background = null;
