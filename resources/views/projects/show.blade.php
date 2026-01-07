@@ -90,13 +90,6 @@
                     </div>
                 @endif
 
-                @if ($project->description)
-                    <div class="mb-5">
-                        <h3 class="h5 mb-2">Quick Summary</h3>
-                        <p class="text-white-50">{!! nl2br(e($project->description)) !!}</p>
-                    </div>
-                @endif
-
                 @if ($project->images->count() > 0)
                     <div class="mb-5">
                         <h2 class="h4 mb-3">Project Gallery</h2>
@@ -199,19 +192,19 @@
                     <div class="mb-4 p-4 rounded-4" style="background: #05040a; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 18px 60px rgba(15,23,42,0.7);">
                         <h2 class="h5 mb-3">Project Video</h2>
 
+                        @if ($project->video)
+                            <video class="w-100 rounded-3 mb-3" controls preload="metadata">
+                                <source src="{{ asset('storage/' . $project->video) }}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        @endif
+
                         @if ($embedUrl)
                             <div class="ratio ratio-16x9 mb-3">
                                 <iframe src="{{ $embedUrl }}" title="{{ $project->title }} video"
                                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                                         allowfullscreen loading="lazy"></iframe>
                             </div>
-                        @endif
-
-                        @if ($project->video)
-                            <video class="w-100 rounded-3" controls preload="metadata">
-                                <source src="{{ asset('storage/' . $project->video) }}" type="video/mp4">
-                                Your browser does not support the video tag.
-                            </video>
                         @endif
 
                         <p class="text-white-50 small mt-2 mb-0">This video highlights key interactions, flows, and outcomes from the project.</p>
