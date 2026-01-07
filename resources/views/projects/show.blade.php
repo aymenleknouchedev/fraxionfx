@@ -108,7 +108,7 @@
             </div>
 
             <div class="col-12 col-lg-5">
-                <div class="mb-4 p-4 rounded-4" style="background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 18px 60px rgba(15,23,42,0.7);">
+                <div class="mb-4 p-4 rounded-4" style="background: rgba(15,23,42,0.35); border: 1px solid rgba(148,163,184,0.35); box-shadow: 0 22px 60px rgba(15,23,42,0.85); backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);">
                     <h2 class="h5 mb-3">Project Details</h2>
                     <dl class="row mb-0 small">
                         @if ($project->client_name)
@@ -190,7 +190,7 @@
                         }
                     @endphp
 
-                    <div class="mb-4 p-4 rounded-4" style="background: #05040a; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 18px 60px rgba(15,23,42,0.7);">
+                    <div class="mb-4 p-4 rounded-4" style="background: rgba(15,23,42,0.35); border: 1px solid rgba(148,163,184,0.35); box-shadow: 0 22px 60px rgba(15,23,42,0.85); backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);">
                         <h2 class="h5 mb-3">Project Video</h2>
 
                         @if ($project->video)
