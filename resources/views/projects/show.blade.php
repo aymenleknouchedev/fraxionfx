@@ -273,6 +273,8 @@
                 }
             }
 
+            console.log('3D model URL:', modelUrl, 'detected ext:', ext);
+
             const scene = new THREE.Scene();
             scene.background = null;
 
@@ -301,6 +303,8 @@
             dirLight.position.set(3, 6, 4);
             scene.add(dirLight);
 
+            let modelLoadedFlag = false;
+
             function centerAndScale(object) {
                 const box = new THREE.Box3().setFromObject(object);
                 const size = new THREE.Vector3();
@@ -316,6 +320,7 @@
             }
 
             function onModelLoaded(object) {
+                modelLoadedFlag = true;
                 if (fallback) fallback.style.display = 'none';
 
                 const root = new THREE.Group();
@@ -327,10 +332,18 @@
             }
 
             function onModelError(message) {
+                modelLoadedFlag = true;
                 if (fallback) {
                     fallback.innerHTML = '<div class="text-center"><div class="mb-1">3D preview not available.</div><div class="small">' + (message || 'The model format may not be supported in the browser.') + '</div></div>';
                 }
             }
+
+            // Safety timeout: if nothing happens within 15s, show an error
+            setTimeout(function () {
+                if (!modelLoadedFlag) {
+                    onModelError('Timed out loading 3D model. Check that the file exists, is reachable under /storage, and uses OBJ/FBX/GLTF/GLB format.');
+                }
+            }, 15000);
 
             if (ext === 'obj') {
                 const loader = new OBJLoader();
