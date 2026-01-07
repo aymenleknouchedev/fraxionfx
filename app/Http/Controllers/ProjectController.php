@@ -30,7 +30,7 @@ class ProjectController extends Controller
             'title' => 'required|string|max:100',
             'description' => 'nullable|string|max:500',
             'summary' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,gif,webp|max:5000',
+            'image' => 'nullable|image|mimes:jpeg,png,gif,webp|max:10240',
             'video_url' => 'nullable|url|max:255',
             'video' => 'nullable|mimetypes:video/mp4,video/quicktime,video/webm|max:200000', // ~200MB
             'project_date' => 'nullable|date',
@@ -97,7 +97,7 @@ class ProjectController extends Controller
             'title' => 'required|string|max:100',
             'description' => 'nullable|string|max:500',
             'summary' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,gif,webp|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,gif,webp|max:10240',
             'video_url' => 'nullable|url|max:255',
             'video' => 'nullable|mimetypes:video/mp4,video/quicktime,video/webm|max:51200',
             'project_date' => 'nullable|date',
