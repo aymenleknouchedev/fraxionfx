@@ -94,25 +94,33 @@
                     <div class="mb-5">
                         <h2 class="h4 mb-3">Project Gallery</h2>
                         <div class="row g-3">
-                            @foreach ($project->images as $image)
+                            @php
+                                $galleryImages = [];
+                            @endphp
+                            @foreach ($project->images as $index => $image)
+                                @php
+                                    $thumbUrl = asset('storage/' . $image->image);
+                                    $thumbAlt = $image->caption ?: ($project->title . ' image');
+                                    $galleryImages[] = ['src' => $thumbUrl, 'alt' => $thumbAlt];
+                                @endphp
                                 <div class="col-6 col-md-4">
-                                    @php
-                                        $thumbUrl = asset('storage/' . $image->image);
-                                        $thumbAlt = $image->caption ?: ($project->title . ' image');
-                                    @endphp
                                     <button type="button"
                                             class="position-relative rounded-3 overflow-hidden border-0 p-0 w-100 bg-transparent"
                                             style="background: #111; cursor: zoom-in;"
                                             data-bs-toggle="modal"
                                             data-bs-target="#projectImageModal"
-                                            data-image="{{ $thumbUrl }}"
-                                            data-alt="{{ $thumbAlt }}">
+                                            data-index="{{ $index }}">
                                         <img src="{{ $thumbUrl }}" alt="{{ $thumbAlt }}"
                                              class="img-fluid w-100" style="object-fit: cover; height: 160px;">
                                     </button>
                                 </div>
                             @endforeach
                         </div>
+                        @if (!empty($galleryImages))
+                            <script>
+                                window.projectGalleryImages = {!! json_encode($galleryImages) !!};
+                            </script>
+                        @endif
                     </div>
                 @endif
             </div>
@@ -236,18 +244,25 @@
 
 <!-- Fullscreen image modal for project gallery -->
 <div class="modal fade" id="projectImageModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+    <div class="modal-dialog modal-dialog-centered modal-fullscreen">
         <div class="modal-content bg-transparent border-0">
             <div class="modal-header border-0">
                 <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body d-flex justify-content-center align-items-center p-0 pb-4">
+            <div class="modal-body d-flex justify-content-center align-items-center p-0 pb-4 position-relative">
+                <button type="button" id="projectImagePrev" class="btn btn-link text-white position-absolute start-0 top-50 translate-middle-y px-3" style="text-decoration: none; font-size: 1.75rem;">
+                    <span aria-hidden="true">&#10094;</span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
                 <img id="projectImageModalImg" src="" alt="Project image"
                      class="img-fluid rounded-4 shadow-lg" style="max-height: 85vh; object-fit: contain;">
+                <button type="button" id="projectImageNext" class="btn btn-link text-white position-absolute end-0 top-50 translate-middle-y px-3" style="text-decoration: none; font-size: 1.75rem;">
+                    <span aria-hidden="true">&#10095;</span>
+                    <span class="visually-hidden">Next</span>
+                </button>
             </div>
         </div>
     </div>
-    
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
@@ -259,17 +274,52 @@
         if (!imageModal) return;
 
         var modalImg = document.getElementById('projectImageModalImg');
+        var prevBtn = document.getElementById('projectImagePrev');
+        var nextBtn = document.getElementById('projectImageNext');
+        var currentIndex = 0;
+
+        function showImageAt(index) {
+            if (!window.projectGalleryImages || !window.projectGalleryImages.length) return;
+            var total = window.projectGalleryImages.length;
+            if (total === 0) return;
+
+            // Wrap index around
+            currentIndex = (index + total) % total;
+
+            var item = window.projectGalleryImages[currentIndex];
+            if (!item || !modalImg) return;
+
+            modalImg.src = item.src;
+            modalImg.alt = item.alt || '';
+        }
 
         imageModal.addEventListener('show.bs.modal', function (event) {
             var trigger = event.relatedTarget;
             if (!trigger || !modalImg) return;
 
-            var imgSrc = trigger.getAttribute('data-image');
-            var imgAlt = trigger.getAttribute('data-alt') || '';
+            var idxAttr = trigger.getAttribute('data-index');
+            var idx = parseInt(idxAttr || '0', 10) || 0;
+            showImageAt(idx);
+        });
 
-            if (imgSrc) {
-                modalImg.src = imgSrc;
-                modalImg.alt = imgAlt;
+        if (prevBtn) {
+            prevBtn.addEventListener('click', function () {
+                showImageAt(currentIndex - 1);
+            });
+        }
+
+        if (nextBtn) {
+            nextBtn.addEventListener('click', function () {
+                showImageAt(currentIndex + 1);
+            });
+        }
+
+        // Optional: keyboard navigation with arrows
+        imageModal.addEventListener('keydown', function (event) {
+            if (event.key === 'ArrowLeft') {
+                showImageAt(currentIndex - 1);
+            } else if (event.key === 'ArrowRight') {
+                showImageAt(currentIndex + 1);
             }
         });
     });
