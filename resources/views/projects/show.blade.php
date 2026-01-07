@@ -147,14 +147,6 @@
                             </dd>
                         @endif
 
-                        @if ($project->model_file)
-                            <dt class="col-4 text-white-50">3D File</dt>
-                            <dd class="col-8">
-                                <a href="{{ asset('storage/' . $project->model_file) }}" class="btn btn-sm btn-outline-light rounded-pill px-3" target="_blank" rel="noopener">
-                                    <i class="fas fa-download me-1"></i> Download 3D Asset
-                                </a>
-                            </dd>
-                        @endif
                     </dl>
                 </div>
 
