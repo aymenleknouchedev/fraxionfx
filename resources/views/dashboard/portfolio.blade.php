@@ -520,6 +520,18 @@
                 </div>
 
                 <div>
+                    <label for="editModelFile" style="display: block; font-weight: bold; color: var(--blue); margin-bottom: 0.5rem;">
+                        3D Project File
+                    </label>
+                    <input type="file"
+                        id="editModelFile"
+                        name="model_file"
+                        accept=".fbx,.obj,.blend"
+                        style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; box-sizing: border-box;">
+                    <small style="color: #666; display: block; margin-top: 0.25rem;">Upload a new FBX/OBJ/BLEND file to replace the current one (leave empty to keep current).</small>
+                </div>
+
+                <div>
                     <label for="editGalleryImages" style="display: block; font-weight: bold; color: var(--blue); margin-bottom: 0.5rem;">
                         Add Gallery Images
                     </label>

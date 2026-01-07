@@ -33,6 +33,7 @@ class ProjectController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,gif,webp|max:10240',
             'video_url' => 'nullable|url|max:255',
             'video' => 'nullable|mimetypes:video/mp4,video/quicktime,video/webm|max:200000', // ~200MB
+            'model_file' => 'nullable|mimes:fbx,obj,blend|max:200000',
             'project_date' => 'nullable|date',
             'project_duration' => 'nullable|string|max:100',
             'client_name' => 'nullable|string|max:150',
@@ -54,6 +55,12 @@ class ProjectController extends Controller
         if ($request->hasFile('video')) {
             $videoPath = $request->file('video')->store('projects/videos', 'public');
             $validated['video'] = $videoPath;
+        }
+
+        // Handle 3D model file upload
+        if ($request->hasFile('model_file')) {
+            $modelPath = $request->file('model_file')->store('projects/models', 'public');
+            $validated['model_file'] = $modelPath;
         }
 
         // Create project
@@ -100,6 +107,7 @@ class ProjectController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,gif,webp|max:10240',
             'video_url' => 'nullable|url|max:255',
             'video' => 'nullable|mimetypes:video/mp4,video/quicktime,video/webm|max:51200',
+            'model_file' => 'nullable|mimes:fbx,obj,blend|max:200000',
             'project_date' => 'nullable|date',
             'project_duration' => 'nullable|string|max:100',
             'client_name' => 'nullable|string|max:150',
@@ -126,6 +134,16 @@ class ProjectController extends Controller
 
             $videoPath = $request->file('video')->store('projects/videos', 'public');
             $validated['video'] = $videoPath;
+        }
+
+        // Handle 3D model file upload
+        if ($request->hasFile('model_file')) {
+            if ($project->model_file) {
+                Storage::disk('public')->delete($project->model_file);
+            }
+
+            $modelPath = $request->file('model_file')->store('projects/models', 'public');
+            $validated['model_file'] = $modelPath;
         }
 
         // Update project
