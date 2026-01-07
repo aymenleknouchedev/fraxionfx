@@ -40,6 +40,7 @@ class ProjectController extends Controller
             'category' => 'nullable|string|max:100',
             'gallery_images.*' => 'nullable|image|mimes:jpeg,png,gif,webp|max:100000', // ~100MB
             'status' => 'required|in:completed,in_progress,planned',
+            'progress' => 'nullable|integer|min:0|max:100',
         ]);
 
         // Add user_id
@@ -114,6 +115,7 @@ class ProjectController extends Controller
             'category' => 'nullable|string|max:100',
             'gallery_images.*' => 'nullable|image|mimes:jpeg,png,gif,webp|max:4096',
             'status' => 'required|in:completed,in_progress,planned',
+            'progress' => 'nullable|integer|min:0|max:100',
         ]);
 
         // Handle cover image upload

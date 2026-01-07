@@ -94,6 +94,30 @@
                             style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; box-sizing: border-box;">
                     </div>
 
+                    <!-- Progress -->
+                    <div>
+                        <label for="progress" style="display: block; font-weight: bold; color: var(--blue); margin-bottom: 0.5rem;">
+                            Progress (%)
+                        </label>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.9rem; color: #555;">
+                                <span>0%</span>
+                                <span id="progressValue">{{ old('progress', 0) }}%</span>
+                                <span>100%</span>
+                            </div>
+                            <input type="range"
+                                name="progress"
+                                id="progress"
+                                min="0"
+                                max="100"
+                                value="{{ old('progress', 0) }}"
+                                style="width: 100%;">
+                            <div style="width: 100%; height: 8px; background: #eee; border-radius: 999px; overflow: hidden;">
+                                <div id="progressBarFill" style="height: 100%; width: {{ old('progress', 0) }}%; background: linear-gradient(90deg, var(--orange), var(--blue)); transition: width 0.2s ease-out;"></div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Client / Company -->
                     <div>
                         <label for="client_name" style="display: block; font-weight: bold; color: var(--blue); margin-bottom: 0.5rem;">
@@ -321,6 +345,7 @@
                                     data-status="{{ $project->status }}"
                                     data-project-date="{{ $project->project_date ? $project->project_date->format('Y-m-d') : '' }}"
                                     data-project-duration="{{ $project->project_duration }}"
+                                    data-progress="{{ $project->progress ?? 0 }}"
                                     data-client-name="{{ $project->client_name }}"
                                     data-category="{{ $project->category }}"
                                     data-video-url="{{ $project->video_url }}"
@@ -439,6 +464,28 @@
                             id="editProjectDuration"
                             name="project_duration"
                             style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; box-sizing: border-box;">
+                    </div>
+                    <div>
+                        <label for="editProgress" style="display: block; font-weight: bold; color: var(--blue); margin-bottom: 0.5rem;">
+                            Progress (%)
+                        </label>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.9rem; color: #555;">
+                                <span>0%</span>
+                                <span id="editProgressValue">0%</span>
+                                <span>100%</span>
+                            </div>
+                            <input type="range"
+                                id="editProgress"
+                                name="progress"
+                                min="0"
+                                max="100"
+                                value="0"
+                                style="width: 100%;">
+                            <div style="width: 100%; height: 8px; background: #eee; border-radius: 999px; overflow: hidden;">
+                                <div id="editProgressBarFill" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--orange), var(--blue)); transition: width 0.2s ease-out;"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -577,6 +624,15 @@
             document.getElementById('editSummary').value = button.dataset.summary || '';
             document.getElementById('editProjectDate').value = button.dataset.projectDate || '';
             document.getElementById('editProjectDuration').value = button.dataset.projectDuration || '';
+            const progressValue = parseInt(button.dataset.progress || '0', 10) || 0;
+            const editProgressInput = document.getElementById('editProgress');
+            const editProgressValue = document.getElementById('editProgressValue');
+            const editProgressBarFill = document.getElementById('editProgressBarFill');
+            if (editProgressInput && editProgressValue && editProgressBarFill) {
+                editProgressInput.value = progressValue;
+                editProgressValue.textContent = progressValue + '%';
+                editProgressBarFill.style.width = progressValue + '%';
+            }
             document.getElementById('editClientName').value = button.dataset.clientName || '';
             document.getElementById('editCategory').value = button.dataset.category || '';
             document.getElementById('editVideoUrl').value = button.dataset.videoUrl || '';
@@ -628,6 +684,34 @@
 
         setupGalleryPreview('gallery_images', 'gallery_images_preview');
         setupGalleryPreview('editGalleryImages', 'edit_gallery_images_preview');
+
+        // Live progress bar updates for create form
+        (function () {
+            const progressInput = document.getElementById('progress');
+            const progressValue = document.getElementById('progressValue');
+            const progressBarFill = document.getElementById('progressBarFill');
+            if (progressInput && progressValue && progressBarFill) {
+                progressInput.addEventListener('input', function () {
+                    const val = parseInt(this.value || '0', 10) || 0;
+                    progressValue.textContent = val + '%';
+                    progressBarFill.style.width = val + '%';
+                });
+            }
+        })();
+
+        // Live progress bar updates for edit form
+        (function () {
+            const editProgressInput = document.getElementById('editProgress');
+            const editProgressValue = document.getElementById('editProgressValue');
+            const editProgressBarFill = document.getElementById('editProgressBarFill');
+            if (editProgressInput && editProgressValue && editProgressBarFill) {
+                editProgressInput.addEventListener('input', function () {
+                    const val = parseInt(this.value || '0', 10) || 0;
+                    editProgressValue.textContent = val + '%';
+                    editProgressBarFill.style.width = val + '%';
+                });
+            }
+        })();
 
         // Close modal when clicking outside
         document.getElementById('editModal').addEventListener('click', function(e) {

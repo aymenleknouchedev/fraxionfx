@@ -24,10 +24,12 @@ class Project extends Model
         'client_name',
         'category',
         'status',
+        'progress',
     ];
 
     protected $casts = [
         'project_date' => 'date',
+        'progress' => 'integer',
     ];
 
     /**
