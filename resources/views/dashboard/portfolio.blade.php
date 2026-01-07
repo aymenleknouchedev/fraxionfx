@@ -39,7 +39,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('projects.store') }}" method="POST" enctype="multipart/form-data">
+            <form id="addProjectForm" action="{{ route('projects.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
                     <!-- Project Title -->
@@ -261,9 +261,10 @@
                 </div>
 
                 <!-- Submit Button -->
-                <button type="submit"
-                    style="background: var(--orange); color: white; padding: 0.75rem 2rem; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; transition: opacity 0.3s;">
-                    <i class="fas fa-plus"></i> Add Project
+                <button id="addProjectSubmitBtn" type="submit"
+                    style="background: var(--orange); color: white; padding: 0.75rem 2rem; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; transition: opacity 0.3s; display: inline-flex; align-items: center; gap: 0.5rem;">
+                    <span class="add-project-submit-text"><i class="fas fa-plus"></i> Add Project</span>
+                    <span class="add-project-loading-spinner" style="display: none; width: 16px; height: 16px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.5); border-top-color: white; animation: spin 0.8s linear infinite;"></span>
                 </button>
             </form>
         </div>
@@ -598,16 +599,31 @@
                         style="background: #ccc; color: #333; padding: 0.75rem 2rem; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
                         Cancel
                     </button>
-                    <button type="submit"
-                        style="background: var(--orange); color: white; padding: 0.75rem 2rem; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
-                        <i class="fas fa-save"></i> Save Changes
+                    <button id="editProjectSubmitBtn" type="submit"
+                        style="background: var(--orange); color: white; padding: 0.75rem 2rem; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; display: inline-flex; align-items: center; gap: 0.5rem;">
+                        <span class="edit-project-submit-text"><i class="fas fa-save"></i> Save Changes</span>
+                        <span class="edit-project-loading-spinner" style="display: none; width: 16px; height: 16px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.5); border-top-color: white; animation: spin 0.8s linear infinite;"></span>
                     </button>
                 </div>
             </form>
         </div>
     </div>
 
+    <!-- Global Loading Overlay for Project Submit -->
+    <div id="projectLoadingOverlay" style="position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: none; align-items: center; justify-content: center; z-index: 2000;">
+        <div style="background: #111827; color: white; padding: 1.5rem 2rem; border-radius: 12px; box-shadow: 0 20px 45px rgba(0,0,0,0.45); display: flex; flex-direction: column; align-items: center; gap: 0.75rem; min-width: 260px; text-align: center;">
+            <div style="width: 32px; height: 32px; border-radius: 50%; border: 3px solid rgba(255,255,255,0.3); border-top-color: #f97316; animation: spin 0.8s linear infinite;"></div>
+            <div style="font-weight: 600; font-size: 0.95rem;">Uploading project files...</div>
+            <div style="font-size: 0.8rem; color: #d1d5db;">Please wait while we save your project.</div>
+        </div>
+    </div>
+
     <script>
+        // Simple spinner animation keyframes
+        const styleEl = document.createElement('style');
+        styleEl.innerHTML = '@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }';
+        document.head.appendChild(styleEl);
+
         function editProject(button) {
             const projectId = button.dataset.id;
             const skillsJson = button.dataset.skills || '[]';
@@ -719,5 +735,43 @@
                 closeEditModal();
             }
         });
+
+        // Show loading indicator on heavy project form submits
+        (function () {
+            const overlay = document.getElementById('projectLoadingOverlay');
+            const addForm = document.getElementById('addProjectForm');
+            const editForm = document.getElementById('editForm');
+            const addBtn = document.getElementById('addProjectSubmitBtn');
+            const editBtn = document.getElementById('editProjectSubmitBtn');
+
+            function startLoading(button, type) {
+                if (overlay) {
+                    overlay.style.display = 'flex';
+                }
+                if (!button) return;
+
+                button.disabled = true;
+                const submitText = button.querySelector('.' + type + '-submit-text');
+                const spinner = button.querySelector('.' + type + '-loading-spinner');
+                if (submitText) {
+                    submitText.textContent = type === 'add-project' ? 'Adding Project...' : 'Saving...';
+                }
+                if (spinner) {
+                    spinner.style.display = 'inline-block';
+                }
+            }
+
+            if (addForm) {
+                addForm.addEventListener('submit', function () {
+                    startLoading(addBtn, 'add-project');
+                });
+            }
+
+            if (editForm) {
+                editForm.addEventListener('submit', function () {
+                    startLoading(editBtn, 'edit-project');
+                });
+            }
+        })();
     </script>
 @endsection
