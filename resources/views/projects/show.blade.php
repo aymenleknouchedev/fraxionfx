@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="overflow-x: hidden;">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,30 +7,65 @@
     <meta name="description" content="{{ Str::limit($project->summary ?? $project->description ?? 'Project case study', 155) }}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
           integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="{{ asset('template/css/vendor.css') }}">
     <link rel="stylesheet" href="{{ asset('template/styles.css') }}">
 </head>
-<body class="bg-dark text-white" style="min-height: 100vh;">
+<body>
 
-<nav id="header-nav" class="navbar navbar-expand-lg py-3" data-bs-theme="dark">
-    <div class="container-fluid padding-side">
-        <a href="{{ url('/') }}" class="navbar-brand fw-bold text-white">
-            <i class="fas fa-arrow-left me-2"></i> Back to portfolio
-        </a>
-    </div>
-</nav>
+    <nav id="header-nav" class="navbar navbar-expand-lg py-4" data-bs-theme="dark">
+        <div class="container-fluid padding-side">
+            <button class="navbar-toggler shadow-none" type="button" data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar"
+                aria-labelledby="offcanvasNavbarLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menu</h5>
+                    <button type="button" class="btn-close text-reset shadow-none" data-bs-dismiss="offcanvas"
+                        aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <ul class="navbar-nav text-center align-items-center justify-content-center flex-grow-1 w-100">
+                        <li class="nav-item">
+                            <a class="nav-link pe-lg-5" href="{{ url('/#hero') }}">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link pe-lg-5" href="{{ url('/#achievements') }}">Skills</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link pe-lg-5" href="{{ url('/#portfolio') }}">Portfolio</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link pe-lg-5" href="{{ url('/#testimonial') }}">Reviews</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link fw-bold border-bottom border-2 border-primary" href="{{ url('/#contact') }}">Contact us</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="d-none d-lg-flex align-items-center gap-3">
+                <a href="{{ url('/') }}" class="btn btn-sm btn-outline-light rounded-pill px-3">
+                    <i class="fas fa-arrow-left me-1"></i> Back to portfolio
+                </a>
+            </div>
+        </div>
+    </nav>
 
 <section class="padding-medium">
-    <div class="container">
+    <div class="container text-white">
         <div class="row g-4 align-items-start">
             <div class="col-12 col-lg-7">
-                <div class="mb-4">
+                <div class="mb-5">
                     <p class="text-uppercase text-primary mb-2" style="letter-spacing: .15em; font-size: .8rem;">
                         Case Study
                     </p>
-                    <h1 class="display-5 fw-bold mb-3">{{ $project->title }}</h1>
+                    <h1 class="display-4 fw-bold mb-3">{{ $project->title }}</h1>
 
                     @if ($project->status)
                         <span class="badge rounded-pill px-3 py-2 me-2 {{ $project->status === 'completed' ? 'bg-success' : ($project->status === 'in_progress' ? 'bg-warning text-dark' : 'bg-secondary') }}">
@@ -59,13 +94,13 @@
                     @endif
                 </div>
 
-                <div class="mb-4">
+                <div class="mb-4 shadow-lg rounded-4 overflow-hidden" style="background: radial-gradient(circle at top, rgba(183,117,255,0.25), transparent 55%), radial-gradient(circle at bottom, rgba(59,130,246,0.2), transparent 55%);">
                     @if ($project->image)
-                        <img src="{{ asset('storage/' . $project->image) }}" alt="{{ $project->title }} cover image"
-                             class="img-fluid rounded-4 shadow-lg w-100" style="object-fit: cover; max-height: 480px;">
+                            <img src="{{ asset('storage/' . $project->image) }}" alt="{{ $project->title }} cover image"
+                                class="img-fluid w-100" style="object-fit: cover; max-height: 480px; border-radius: 24px;">
                     @else
-                        <div class="rounded-4 d-flex align-items-center justify-content-center text-center shadow-lg"
-                             style="background: linear-gradient(135deg, #6c5ce7, #fd79a8); min-height: 260px;">
+                            <div class="d-flex align-items-center justify-content-center text-center"
+                                style="background: linear-gradient(135deg, #6c5ce7, #fd79a8); min-height: 260px; border-radius: 24px;">
                             <div>
                                 <i class="fas fa-image fa-3x mb-3"></i>
                                 <p class="mb-0 fw-semibold">No cover image provided</p>
@@ -75,21 +110,21 @@
                 </div>
 
                 @if ($project->summary)
-                    <div class="mb-4">
+                    <div class="mb-5">
                         <h2 class="h4 mb-3">Project Overview</h2>
                         <p class="text-white-50" style="line-height: 1.8;">{!! nl2br(e($project->summary)) !!}</p>
                     </div>
                 @endif
 
                 @if ($project->description)
-                    <div class="mb-4">
+                    <div class="mb-5">
                         <h3 class="h5 mb-2">Quick Summary</h3>
                         <p class="text-white-50">{!! nl2br(e($project->description)) !!}</p>
                     </div>
                 @endif
 
                 @if ($project->images->count() > 0)
-                    <div class="mb-4">
+                    <div class="mb-5">
                         <h2 class="h4 mb-3">Project Gallery</h2>
                         <div class="row g-3">
                             @foreach ($project->images as $image)
@@ -106,7 +141,7 @@
             </div>
 
             <div class="col-12 col-lg-5">
-                <div class="mb-4 p-4 rounded-4" style="background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)); border: 1px solid rgba(255,255,255,0.1);">
+                <div class="mb-4 p-4 rounded-4" style="background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 18px 60px rgba(15,23,42,0.7);">
                     <h2 class="h5 mb-3">Project Details</h2>
                     <dl class="row mb-0 small">
                         @if ($project->client_name)
@@ -148,7 +183,7 @@
                 </div>
 
                 @if ($project->video_url || $project->video)
-                    <div class="mb-4 p-4 rounded-4" style="background: #05040a; border: 1px solid rgba(255,255,255,0.08);">
+                    <div class="mb-4 p-4 rounded-4" style="background: #05040a; border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 18px 60px rgba(15,23,42,0.7);">
                         <h2 class="h5 mb-3">Project Video</h2>
 
                         @if ($project->video_url)
@@ -174,7 +209,16 @@
     </div>
 </section>
 
+<footer class="padding-medium pt-0">
+    <div class="container text-white-50 small text-center">
+        <hr class="border-secondary mb-3">
+        <p class="mb-1">&copy; {{ date('Y') }} {{ \App\Models\User::first()?->name ?? 'Portfolio' }}. All rights reserved.</p>
+        <a href="{{ url('/') }}" class="text-decoration-none text-white-50">Back to home</a>
+    </div>
+</footer>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
 </body>
 </html>
