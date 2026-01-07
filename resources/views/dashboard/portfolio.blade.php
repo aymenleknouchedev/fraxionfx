@@ -56,19 +56,6 @@
                             style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; box-sizing: border-box;">
                     </div>
 
-                    <!-- Project URL -->
-                    <div>
-                        <label for="url" style="display: block; font-weight: bold; color: var(--blue); margin-bottom: 0.5rem;">
-                            Project URL (Optional)
-                        </label>
-                        <input type="url"
-                            name="url"
-                            id="url"
-                            value="{{ old('url') }}"
-                            placeholder="https://example.com"
-                            style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; box-sizing: border-box;">
-                    </div>
-
                     <!-- Status -->
                     <div>
                         <label for="status" style="display: block; font-weight: bold; color: var(--blue); margin-bottom: 0.5rem;">
@@ -82,10 +69,61 @@
                         </select>
                     </div>
 
+                    <!-- Project Date -->
+                    <div>
+                        <label for="project_date" style="display: block; font-weight: bold; color: var(--blue); margin-bottom: 0.5rem;">
+                            Project Date (Optional)
+                        </label>
+                        <input type="date"
+                            name="project_date"
+                            id="project_date"
+                            value="{{ old('project_date') }}"
+                            style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; box-sizing: border-box;">
+                    </div>
+
+                    <!-- Project Duration -->
+                    <div>
+                        <label for="project_duration" style="display: block; font-weight: bold; color: var(--blue); margin-bottom: 0.5rem;">
+                            Project Duration (Optional)
+                        </label>
+                        <input type="text"
+                            name="project_duration"
+                            id="project_duration"
+                            value="{{ old('project_duration') }}"
+                            placeholder="e.g., 3 months, 2024 Q1"
+                            style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; box-sizing: border-box;">
+                    </div>
+
+                    <!-- Client / Company -->
+                    <div>
+                        <label for="client_name" style="display: block; font-weight: bold; color: var(--blue); margin-bottom: 0.5rem;">
+                            Client / Company (Optional)
+                        </label>
+                        <input type="text"
+                            name="client_name"
+                            id="client_name"
+                            value="{{ old('client_name') }}"
+                            placeholder="e.g., Acme Corp."
+                            style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; box-sizing: border-box;">
+                    </div>
+
+                    <!-- Category -->
+                    <div>
+                        <label for="category" style="display: block; font-weight: bold; color: var(--blue); margin-bottom: 0.5rem;">
+                            Category (Optional)
+                        </label>
+                        <input type="text"
+                            name="category"
+                            id="category"
+                            value="{{ old('category') }}"
+                            placeholder="e.g., Web App, Branding"
+                            style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; box-sizing: border-box;">
+                    </div>
+
                     <!-- Project Image -->
                     <div>
                         <label for="image" style="display: block; font-weight: bold; color: var(--blue); margin-bottom: 0.5rem;">
-                            Project Image (Optional)
+                            Cover Image (Optional)
                         </label>
                         <input type="file"
                             name="image"
@@ -95,17 +133,47 @@
                         <small style="color: #666; display: block; margin-top: 0.25rem;">Max 2MB</small>
                     </div>
 
-                    <!-- Project PDF -->
+                    <!-- Project Video Upload -->
                     <div>
-                        <label for="pdf" style="display: block; font-weight: bold; color: var(--blue); margin-bottom: 0.5rem;">
-                            PDF Presentation (Optional)
+                        <label for="video" style="display: block; font-weight: bold; color: var(--blue); margin-bottom: 0.5rem;">
+                            Project Video Upload (Optional)
                         </label>
                         <input type="file"
-                            name="pdf"
-                            id="pdf"
-                            accept=".pdf"
+                            name="video"
+                            id="video"
+                            accept="video/*"
                             style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; box-sizing: border-box;">
-                        <small style="color: #666; display: block; margin-top: 0.25rem;">Max 5MB, PDF only</small>
+                        <small style="color: #666; display: block; margin-top: 0.25rem;">Max 50MB, MP4/WEBM</small>
+                    </div>
+                </div>
+
+                <!-- Video Embed URL & Gallery -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+                    <div>
+                        <label for="video_url" style="display: block; font-weight: bold; color: var(--blue); margin-bottom: 0.5rem;">
+                            Video Embed URL (Optional)
+                        </label>
+                        <input type="url"
+                            name="video_url"
+                            id="video_url"
+                            value="{{ old('video_url') }}"
+                            placeholder="YouTube or Vimeo embed URL"
+                            style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; box-sizing: border-box;">
+                        <small style="color: #666; display: block; margin-top: 0.25rem;">Use an embeddable URL (e.g., https://www.youtube.com/embed/...) for best results.</small>
+                    </div>
+
+                    <div>
+                        <label for="gallery_images" style="display: block; font-weight: bold; color: var(--blue); margin-bottom: 0.5rem;">
+                            Image Gallery (Optional)
+                        </label>
+                        <input type="file"
+                            name="gallery_images[]"
+                            id="gallery_images"
+                            accept="image/*"
+                            multiple
+                            style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; box-sizing: border-box;">
+                        <small style="color: #666; display: block; margin-top: 0.25rem;">Hold Ctrl / Cmd or Shift to select multiple images at once, or use the picker repeatedly.</small>
+                        <div id="gallery_images_preview" style="margin-top: 0.75rem; display: flex; flex-wrap: wrap; gap: 0.5rem;"></div>
                     </div>
                 </div>
 
@@ -142,10 +210,22 @@
                     }
                 </style>
 
-                <!-- Description -->
+                <!-- Detailed Summary -->
+                <div style="margin-bottom: 2rem;">
+                    <label for="summary" style="display: block; font-weight: bold; color: var(--blue); margin-bottom: 0.5rem;">
+                        Detailed Project Summary (Optional)
+                    </label>
+                    <textarea
+                        name="summary"
+                        id="summary"
+                        placeholder="Describe the project goals, process, and outcomes in detail..."
+                        style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; min-height: 140px; font-family: inherit; box-sizing: border-box; resize: vertical;">{{ old('summary') }}</textarea>
+                </div>
+
+                <!-- Short Description -->
                 <div style="margin-bottom: 2rem;">
                     <label for="description" style="display: block; font-weight: bold; color: var(--blue); margin-bottom: 0.5rem;">
-                        Description (Optional)
+                        Short Description (Optional)
                     </label>
                     <textarea
                         name="description"
@@ -230,20 +310,21 @@
                                 </div>
                             @endif
 
-                            <!-- Project URL / PDF Action -->
-                            @if ($project->url || $project->pdf)
-                                <a href="{{ $project->url ? $project->url : asset('storage/' . $project->pdf) }}" target="_blank" style="color: white; background: var(--blue); text-decoration: none; padding: 0.5rem 1rem; border-radius: 4px; display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 1rem; font-weight: 500;">
-                                    @if ($project->url)
-                                        <i class="fas fa-external-link-alt"></i> View Project
-                                    @else
-                                        <i class="fas fa-file-pdf"></i> Download Presentation
-                                    @endif
-                                </a>
-                            @endif
-
                             <!-- Actions -->
                             <div style="display: flex; gap: 0.5rem; justify-content: space-between;">
-                                <button onclick="editProject({{ $project->id }}, '{{ $project->title }}', '{{ $project->description }}', '{{ $project->url }}', '{{ $project->status }}', [{{ $project->skills->pluck('id')->join(',') }}])"
+                                <button type="button"
+                                    onclick="editProject(this)"
+                                    data-id="{{ $project->id }}"
+                                    data-title="{{ $project->title }}"
+                                    data-description="{{ $project->description }}"
+                                    data-summary="{{ $project->summary }}"
+                                    data-status="{{ $project->status }}"
+                                    data-project-date="{{ $project->project_date ? $project->project_date->format('Y-m-d') : '' }}"
+                                    data-project-duration="{{ $project->project_duration }}"
+                                    data-client-name="{{ $project->client_name }}"
+                                    data-category="{{ $project->category }}"
+                                    data-video-url="{{ $project->video_url }}"
+                                    data-skills='@json($project->skills->pluck("id"))'
                                     style="flex: 1; background: var(--blue); color: white; padding: 0.5rem; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9rem; text-decoration: none;">
                                     <i class="fas fa-edit"></i> Edit
                                 </button>
@@ -308,16 +389,6 @@
                 </div>
 
                 <div>
-                    <label for="editUrl" style="display: block; font-weight: bold; color: var(--blue); margin-bottom: 0.5rem;">
-                        Project URL
-                    </label>
-                    <input type="url"
-                        id="editUrl"
-                        name="url"
-                        style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; box-sizing: border-box;">
-                </div>
-
-                <div>
                     <label for="editStatus" style="display: block; font-weight: bold; color: var(--blue); margin-bottom: 0.5rem;">
                         Status
                     </label>
@@ -330,13 +401,78 @@
 
                 <div>
                     <label for="editDescription" style="display: block; font-weight: bold; color: var(--blue); margin-bottom: 0.5rem;">
-                        Description
+                        Short Description
                     </label>
                     <textarea
                         id="editDescription"
                         name="description"
                         maxlength="500"
                         style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; min-height: 100px; font-family: inherit; box-sizing: border-box;"></textarea>
+                </div>
+
+                <div>
+                    <label for="editSummary" style="display: block; font-weight: bold; color: var(--blue); margin-bottom: 0.5rem;">
+                        Detailed Project Summary
+                    </label>
+                    <textarea
+                        id="editSummary"
+                        name="summary"
+                        style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; min-height: 140px; font-family: inherit; box-sizing: border-box;"></textarea>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                    <div>
+                        <label for="editProjectDate" style="display: block; font-weight: bold; color: var(--blue); margin-bottom: 0.5rem;">
+                            Project Date
+                        </label>
+                        <input type="date"
+                            id="editProjectDate"
+                            name="project_date"
+                            style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; box-sizing: border-box;">
+                    </div>
+
+                    <div>
+                        <label for="editProjectDuration" style="display: block; font-weight: bold; color: var(--blue); margin-bottom: 0.5rem;">
+                            Project Duration
+                        </label>
+                        <input type="text"
+                            id="editProjectDuration"
+                            name="project_duration"
+                            style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; box-sizing: border-box;">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                    <div>
+                        <label for="editClientName" style="display: block; font-weight: bold; color: var(--blue); margin-bottom: 0.5rem;">
+                            Client / Company
+                        </label>
+                        <input type="text"
+                            id="editClientName"
+                            name="client_name"
+                            style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; box-sizing: border-box;">
+                    </div>
+
+                    <div>
+                        <label for="editCategory" style="display: block; font-weight: bold; color: var(--blue); margin-bottom: 0.5rem;">
+                            Category
+                        </label>
+                        <input type="text"
+                            id="editCategory"
+                            name="category"
+                            style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; box-sizing: border-box;">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="editVideoUrl" style="display: block; font-weight: bold; color: var(--blue); margin-bottom: 0.5rem;">
+                        Video Embed URL
+                    </label>
+                    <input type="url"
+                        id="editVideoUrl"
+                        name="video_url"
+                        style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; box-sizing: border-box;">
+                    <small style="color: #666; display: block; margin-top: 0.25rem;">Use an embeddable URL (e.g., https://www.youtube.com/embed/...).</small>
                 </div>
 
                 <div>
@@ -361,7 +497,7 @@
 
                 <div>
                     <label for="editImage" style="display: block; font-weight: bold; color: var(--blue); margin-bottom: 0.5rem;">
-                        Project Image
+                        Cover Image
                     </label>
                     <input type="file"
                         id="editImage"
@@ -372,15 +508,29 @@
                 </div>
 
                 <div>
-                    <label for="editPdf" style="display: block; font-weight: bold; color: var(--blue); margin-bottom: 0.5rem;">
-                        PDF Presentation
+                    <label for="editVideo" style="display: block; font-weight: bold; color: var(--blue); margin-bottom: 0.5rem;">
+                        Project Video Upload
                     </label>
                     <input type="file"
-                        id="editPdf"
-                        name="pdf"
-                        accept=".pdf"
+                        id="editVideo"
+                        name="video"
+                        accept="video/*"
                         style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; box-sizing: border-box;">
-                    <small style="color: #666; display: block; margin-top: 0.25rem;">Max 5MB, PDF only (leave empty to keep current)</small>
+                    <small style="color: #666; display: block; margin-top: 0.25rem;">Max 50MB, MP4/WEBM (leave empty to keep current)</small>
+                </div>
+
+                <div>
+                    <label for="editGalleryImages" style="display: block; font-weight: bold; color: var(--blue); margin-bottom: 0.5rem;">
+                        Add Gallery Images
+                    </label>
+                    <input type="file"
+                        id="editGalleryImages"
+                        name="gallery_images[]"
+                        accept="image/*"
+                        multiple
+                        style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; box-sizing: border-box;">
+                    <small style="color: #666; display: block; margin-top: 0.25rem;">You can select multiple images to append to the existing gallery.</small>
+                    <div id="edit_gallery_images_preview" style="margin-top: 0.75rem; display: flex; flex-wrap: wrap; gap: 0.5rem;"></div>
                 </div>
 
                 <div style="display: flex; gap: 1rem; justify-content: flex-end;">
@@ -399,12 +549,26 @@
     </div>
 
     <script>
-        function editProject(id, title, description, url, status, skillIds = []) {
-            document.getElementById('editTitle').value = title;
-            document.getElementById('editUrl').value = url;
-            document.getElementById('editStatus').value = status;
-            document.getElementById('editDescription').value = description;
-            document.getElementById('editForm').action = `/projects/${id}`;
+        function editProject(button) {
+            const projectId = button.dataset.id;
+            const skillsJson = button.dataset.skills || '[]';
+            let skillIds = [];
+            try {
+                skillIds = JSON.parse(skillsJson);
+            } catch (e) {
+                skillIds = [];
+            }
+
+            document.getElementById('editTitle').value = button.dataset.title || '';
+            document.getElementById('editStatus').value = button.dataset.status || '';
+            document.getElementById('editDescription').value = button.dataset.description || '';
+            document.getElementById('editSummary').value = button.dataset.summary || '';
+            document.getElementById('editProjectDate').value = button.dataset.projectDate || '';
+            document.getElementById('editProjectDuration').value = button.dataset.projectDuration || '';
+            document.getElementById('editClientName').value = button.dataset.clientName || '';
+            document.getElementById('editCategory').value = button.dataset.category || '';
+            document.getElementById('editVideoUrl').value = button.dataset.videoUrl || '';
+            document.getElementById('editForm').action = `/projects/${projectId}`;
             
             // Uncheck all skill checkboxes
             document.querySelectorAll('.editSkillCheckbox').forEach(checkbox => {
@@ -425,6 +589,33 @@
         function closeEditModal() {
             document.getElementById('editModal').style.display = 'none';
         }
+
+        // Basic filename previews for gallery inputs
+        function setupGalleryPreview(inputId, previewId) {
+            const input = document.getElementById(inputId);
+            const preview = document.getElementById(previewId);
+            if (!input || !preview) return;
+
+            input.addEventListener('change', function () {
+                preview.innerHTML = '';
+                if (!this.files || !this.files.length) return;
+
+                Array.from(this.files).forEach(file => {
+                    const badge = document.createElement('span');
+                    badge.textContent = file.name;
+                    badge.style.display = 'inline-block';
+                    badge.style.fontSize = '0.8rem';
+                    badge.style.padding = '0.25rem 0.5rem';
+                    badge.style.borderRadius = '4px';
+                    badge.style.background = '#f5f5f5';
+                    badge.style.border = '1px solid #ddd';
+                    preview.appendChild(badge);
+                });
+            });
+        }
+
+        setupGalleryPreview('gallery_images', 'gallery_images_preview');
+        setupGalleryPreview('editGalleryImages', 'edit_gallery_images_preview');
 
         // Close modal when clicking outside
         document.getElementById('editModal').addEventListener('click', function(e) {

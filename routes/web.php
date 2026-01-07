@@ -14,6 +14,7 @@ use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\ContactController;
 
 Route::get('/', [WelcomeController::class, 'index']);
+Route::get('/projects/{project}', [ProjectController::class, 'show'])->name('projects.show');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
 Route::get('/login', [LoginController::class, 'show'])->name('login');

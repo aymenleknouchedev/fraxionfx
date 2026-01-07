@@ -29,25 +29,31 @@ class ProjectController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:100',
             'description' => 'nullable|string|max:500',
-            'url' => 'nullable|url|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,gif,webp|max:2048',
-            'pdf' => 'nullable|mimes:pdf|max:5120',
+            'summary' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,gif,webp|max:5000',
+            'video_url' => 'nullable|url|max:255',
+            'video' => 'nullable|mimetypes:video/mp4,video/quicktime,video/webm|max:200000', // ~200MB
+            'project_date' => 'nullable|date',
+            'project_duration' => 'nullable|string|max:100',
+            'client_name' => 'nullable|string|max:150',
+            'category' => 'nullable|string|max:100',
+            'gallery_images.*' => 'nullable|image|mimes:jpeg,png,gif,webp|max:100000', // ~100MB
             'status' => 'required|in:completed,in_progress,planned',
         ]);
 
         // Add user_id
         $validated['user_id'] = Auth::id();
 
-        // Handle image upload
+        // Handle cover image upload
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('projects', 'public');
             $validated['image'] = $path;
         }
 
-        // Handle PDF upload
-        if ($request->hasFile('pdf')) {
-            $path = $request->file('pdf')->store('projects/pdfs', 'public');
-            $validated['pdf'] = $path;
+        // Handle video upload
+        if ($request->hasFile('video')) {
+            $videoPath = $request->file('video')->store('projects/videos', 'public');
+            $validated['video'] = $videoPath;
         }
 
         // Create project
@@ -58,6 +64,22 @@ class ProjectController extends Controller
             $skillIds = array_filter($request->input('skills', []));
             if (!empty($skillIds)) {
                 $project->skills()->sync($skillIds);
+            }
+        }
+
+        // Store gallery images if provided
+        if ($request->hasFile('gallery_images')) {
+            foreach ($request->file('gallery_images') as $index => $imageFile) {
+                if (!$imageFile) {
+                    continue;
+                }
+
+                $galleryPath = $imageFile->store('projects/gallery', 'public');
+
+                $project->images()->create([
+                    'image' => $galleryPath,
+                    'sort_order' => $index,
+                ]);
             }
         }
 
@@ -74,13 +96,19 @@ class ProjectController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:100',
             'description' => 'nullable|string|max:500',
-            'url' => 'nullable|url|max:255',
+            'summary' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,gif,webp|max:2048',
-            'pdf' => 'nullable|mimes:pdf|max:5120',
+            'video_url' => 'nullable|url|max:255',
+            'video' => 'nullable|mimetypes:video/mp4,video/quicktime,video/webm|max:51200',
+            'project_date' => 'nullable|date',
+            'project_duration' => 'nullable|string|max:100',
+            'client_name' => 'nullable|string|max:150',
+            'category' => 'nullable|string|max:100',
+            'gallery_images.*' => 'nullable|image|mimes:jpeg,png,gif,webp|max:4096',
             'status' => 'required|in:completed,in_progress,planned',
         ]);
 
-        // Handle image upload
+        // Handle cover image upload
         if ($request->hasFile('image')) {
             // Delete old image if exists
             if ($project->image) {
@@ -90,14 +118,14 @@ class ProjectController extends Controller
             $validated['image'] = $path;
         }
 
-        // Handle PDF upload
-        if ($request->hasFile('pdf')) {
-            // Delete old PDF if exists
-            if ($project->pdf) {
-                Storage::disk('public')->delete($project->pdf);
+        // Handle video upload
+        if ($request->hasFile('video')) {
+            if ($project->video) {
+                Storage::disk('public')->delete($project->video);
             }
-            $path = $request->file('pdf')->store('projects/pdfs', 'public');
-            $validated['pdf'] = $path;
+
+            $videoPath = $request->file('video')->store('projects/videos', 'public');
+            $validated['video'] = $videoPath;
         }
 
         // Update project
@@ -107,6 +135,24 @@ class ProjectController extends Controller
         if ($request->has('skills')) {
             $skillIds = array_filter($request->input('skills', []));
             $project->skills()->sync($skillIds);
+        }
+
+        // Append new gallery images if provided (existing ones are kept)
+        if ($request->hasFile('gallery_images')) {
+            $existingCount = $project->images()->count();
+
+            foreach ($request->file('gallery_images') as $index => $imageFile) {
+                if (!$imageFile) {
+                    continue;
+                }
+
+                $galleryPath = $imageFile->store('projects/gallery', 'public');
+
+                $project->images()->create([
+                    'image' => $galleryPath,
+                    'sort_order' => $existingCount + $index,
+                ]);
+            }
         }
 
         return redirect()->route('projects.index')
@@ -123,14 +169,19 @@ class ProjectController extends Controller
             Storage::disk('public')->delete($project->image);
         }
 
-        // Delete PDF if exists
-        if ($project->pdf) {
-            Storage::disk('public')->delete($project->pdf);
-        }
-
         $project->delete();
 
         return redirect()->route('projects.index')
                        ->with('success', 'Project deleted successfully!');
+    }
+
+    /**
+     * Show a public project details page.
+     */
+    public function show(Project $project)
+    {
+        $project->load(['skills', 'images', 'user']);
+
+        return view('projects.show', compact('project'));
     }
 }

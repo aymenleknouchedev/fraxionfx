@@ -14,10 +14,19 @@ class Project extends Model
         'user_id',
         'title',
         'description',
-        'url',
+        'summary',
         'image',
-        'pdf',
+        'video_url',
+        'video',
+        'project_date',
+        'project_duration',
+        'client_name',
+        'category',
         'status',
+    ];
+
+    protected $casts = [
+        'project_date' => 'date',
     ];
 
     /**
@@ -34,5 +43,13 @@ class Project extends Model
     public function skills()
     {
         return $this->belongsToMany(Skill::class, 'project_skill');
+    }
+
+    /**
+     * Get the gallery images for the project
+     */
+    public function images()
+    {
+        return $this->hasMany(ProjectImage::class)->orderBy('sort_order')->orderBy('id');
     }
 }

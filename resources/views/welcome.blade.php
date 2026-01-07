@@ -615,14 +615,14 @@
 
                                     <h2 class="fw-bold mb-2">
 
-                                        <a href="{{ $project->url ? $project->url : ($project->pdf ? asset('storage/' . $project->pdf) : '#') }}" target="_blank" class="text-decoration-none text-white">{{ $project->title }}</a>
+                                        <a href="{{ route('projects.show', $project) }}" class="text-decoration-none text-white">{{ $project->title }}</a>
 
                                     </h2>
 
                                     <p class="text-white-50 mb-3" style="font-size: 0.9rem;">{{ $project->description ?? 'Project description' }}</p>
 
-                                    <a href="{{ $project->url ? $project->url : ($project->pdf ? asset('storage/' . $project->pdf) : '#') }}" target="_blank" class="text-white text-decoration-none fw-semibold"
-                                        style="font-size: 0.9rem;">View Project ?</a>
+                                    <a href="{{ route('projects.show', $project) }}" class="text-white text-decoration-none fw-semibold"
+                                        style="font-size: 0.9rem;">View Project Details</a>
 
                                 </div>
 
