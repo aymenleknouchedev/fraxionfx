@@ -260,13 +260,6 @@
                 return;
             }
 
-            if (!THREE.OrbitControls) {
-                if (fallback) {
-                    fallback.innerHTML = '<div class="text-center"><div class="mb-1">3D controls not available.</div><div class="small">OrbitControls could not be initialized. Please refresh the page.</div></div>';
-                }
-                return;
-            }
-
             const modelUrl = @json(asset('storage/' . $project->model_file));
             const ext = modelUrl.split('.').pop().toLowerCase();
 
@@ -281,10 +274,18 @@
             const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
             camera.position.set(2.5, 2.0, 3.0);
 
-            const controls = new THREE.OrbitControls(camera, renderer.domElement);
-            controls.enableDamping = true;
-            controls.dampingFactor = 0.08;
-            controls.enablePan = false;
+            let controls = null;
+            try {
+                if (THREE.OrbitControls) {
+                    controls = new THREE.OrbitControls(camera, renderer.domElement);
+                    controls.enableDamping = true;
+                    controls.dampingFactor = 0.08;
+                    controls.enablePan = false;
+                }
+            } catch (e) {
+                console.warn('OrbitControls could not be initialized:', e);
+                controls = null;
+            }
 
             const hemiLight = new THREE.HemisphereLight(0xffffff, 0x111827, 0.9);
             scene.add(hemiLight);
@@ -347,7 +348,9 @@
 
             function animate() {
                 requestAnimationFrame(animate);
-                controls.update();
+                if (controls) {
+                    controls.update();
+                }
                 renderer.render(scene, camera);
             }
 
