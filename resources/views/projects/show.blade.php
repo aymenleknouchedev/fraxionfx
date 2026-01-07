@@ -147,16 +147,21 @@
                             </dd>
                         @endif
 
-                        @if ($project->model_file)
-                            <dt class="col-4 text-white-50">3D File</dt>
-                            <dd class="col-8">
-                                <a href="{{ asset('storage/' . $project->model_file) }}" class="btn btn-sm btn-outline-light rounded-pill px-3" target="_blank" rel="noopener">
-                                    <i class="fas fa-download me-1"></i> Download 3D Asset
-                                </a>
-                            </dd>
-                        @endif
                     </dl>
                 </div>
+
+                @if ($project->model_file)
+                    <div class="mb-4 p-4 rounded-4" style="background: #020617; border: 1px solid rgba(148,163,184,0.4); box-shadow: 0 18px 60px rgba(15,23,42,0.9);">
+                        <h2 class="h5 mb-3">3D Model Preview</h2>
+                        <div id="modelViewerContainer" style="width: 100%; height: 320px; border-radius: 18px; background: radial-gradient(circle at top, rgba(56,189,248,0.18), transparent 55%), radial-gradient(circle at bottom, rgba(129,140,248,0.25), transparent 55%); overflow: hidden; position: relative;">
+                            <div id="modelViewerFallback" class="d-flex flex-column align-items-center justify-content-center h-100 text-white-50 small">
+                                <div class="spinner-border text-light mb-2" role="status" style="width: 1.5rem; height: 1.5rem;"></div>
+                                <div>Loading 3D model...</div>
+                            </div>
+                        </div>
+                        <small class="text-white-50 d-block mt-2">Drag to orbit, scroll to zoom the model.</small>
+                    </div>
+                @endif
 
                 @if ($project->video_url || $project->video)
                     @php
@@ -231,6 +236,106 @@
         <a href="{{ url('/') }}" class="text-decoration-none text-white-50">Back to home</a>
     </div>
 </footer>
+
+@if ($project->model_file)
+    <!-- Three.js and loaders for 3D preview -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/examples/js/loaders/OBJLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/examples/js/libs/inflate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/examples/js/loaders/FBXLoader.js"></script>
+
+    <script>
+        (function () {
+            const container = document.getElementById('modelViewerContainer');
+            if (!container || typeof THREE === 'undefined') return;
+
+            const modelUrl = @json(asset('storage/' . $project->model_file));
+            const ext = modelUrl.split('.').pop().toLowerCase();
+
+            const scene = new THREE.Scene();
+            scene.background = null;
+
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setPixelRatio(window.devicePixelRatio || 1);
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            container.appendChild(renderer.domElement);
+
+            const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera.position.set(2.5, 2.0, 3.0);
+
+            const controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.08;
+            controls.enablePan = false;
+
+            const hemiLight = new THREE.HemisphereLight(0xffffff, 0x111827, 0.9);
+            scene.add(hemiLight);
+            const dirLight = new THREE.DirectionalLight(0xffffff, 0.7);
+            dirLight.position.set(3, 6, 4);
+            scene.add(dirLight);
+
+            const fallback = document.getElementById('modelViewerFallback');
+
+            function centerAndScale(object) {
+                const box = new THREE.Box3().setFromObject(object);
+                const size = new THREE.Vector3();
+                const center = new THREE.Vector3();
+                box.getSize(size);
+                box.getCenter(center);
+
+                object.position.sub(center);
+
+                const maxDim = Math.max(size.x, size.y, size.z) || 1;
+                const scale = 1.8 / maxDim;
+                object.scale.setScalar(scale);
+            }
+
+            function onModelLoaded(object) {
+                if (fallback) fallback.style.display = 'none';
+
+                const root = new THREE.Group();
+                root.add(object);
+                centerAndScale(root);
+                scene.add(root);
+
+                animate();
+            }
+
+            function onModelError() {
+                if (fallback) {
+                    fallback.innerHTML = '<div class="text-center"><div class="mb-1">3D preview not available.</div><div class="small">The model format may not be supported in the browser.</div></div>';
+                }
+            }
+
+            if (ext === 'obj' && THREE.OBJLoader) {
+                const loader = new THREE.OBJLoader();
+                loader.load(modelUrl, onModelLoaded, undefined, onModelError);
+            } else if (ext === 'fbx' && THREE.FBXLoader) {
+                const loader = new THREE.FBXLoader();
+                loader.load(modelUrl, onModelLoaded, undefined, onModelError);
+            } else {
+                onModelError();
+                return;
+            }
+
+            function animate() {
+                requestAnimationFrame(animate);
+                controls.update();
+                renderer.render(scene, camera);
+            }
+
+            window.addEventListener('resize', function () {
+                const width = container.clientWidth;
+                const height = container.clientHeight;
+                if (!width || !height) return;
+                camera.aspect = width / height;
+                camera.updateProjectionMatrix();
+                renderer.setSize(width, height);
+            });
+        })();
+    </script>
+@endif
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
