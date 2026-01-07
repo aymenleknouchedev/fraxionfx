@@ -150,7 +150,15 @@
                     </dl>
                 </div>
 
-                @if ($project->model_file)
+                @if ($project->model_embed)
+                    <div class="mb-4 p-4 rounded-4" style="background: #020617; border: 1px solid rgba(148,163,184,0.4); box-shadow: 0 18px 60px rgba(15,23,42,0.9);">
+                        <h2 class="h5 mb-3">3D Model Preview</h2>
+                        <div class="ratio ratio-16x9 mb-2">
+                            {!! $project->model_embed !!}
+                        </div>
+                        <small class="text-white-50 d-block mt-1">Interactive 3D viewer embedded from an external service (e.g., Sketchfab).</small>
+                    </div>
+                @elseif ($project->model_file)
                     <div class="mb-4 p-4 rounded-4" style="background: #020617; border: 1px solid rgba(148,163,184,0.4); box-shadow: 0 18px 60px rgba(15,23,42,0.9);">
                         <h2 class="h5 mb-3">3D Model Preview</h2>
                         <div id="modelViewerContainer" style="width: 100%; height: 320px; border-radius: 18px; background: radial-gradient(circle at top, rgba(56,189,248,0.18), transparent 55%), radial-gradient(circle at bottom, rgba(129,140,248,0.25), transparent 55%); overflow: hidden; position: relative;">
@@ -237,7 +245,7 @@
     </div>
 </footer>
 
-@if ($project->model_file)
+@if ($project->model_file && ! $project->model_embed)
     <!-- Three.js module-based viewer for 3D preview -->
     <script type="module">
         import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.159.0/build/three.module.js';

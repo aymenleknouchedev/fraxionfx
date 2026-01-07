@@ -259,6 +259,19 @@
                     <small style="color: #666; display: block; margin-top: 0.25rem;">Supported for web preview: GLTF/GLB, OBJ, FBX. BLEND files will upload but cannot be previewed directly.</small>
                 </div>
 
+                <!-- 3D Embed Code (e.g., Sketchfab) -->
+                <div style="margin-bottom: 2rem;">
+                    <label for="model_embed" style="display: block; font-weight: bold; color: var(--blue); margin-bottom: 0.5rem;">
+                        3D Embed Code (Optional)
+                    </label>
+                    <textarea
+                        name="model_embed"
+                        id="model_embed"
+                        placeholder="Paste 3D viewer embed code here (e.g., Sketchfab iframe)"
+                        style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 0.9rem; min-height: 100px; font-family: monospace; box-sizing: border-box; resize: vertical;">{{ old('model_embed') }}</textarea>
+                    <small style="color: #666; display: block; margin-top: 0.25rem;">Example: the full &lt;iframe&gt; / embed snippet from Sketchfab or other 3D hosting.</small>
+                </div>
+
                 <!-- Short Description -->
                 <div style="margin-bottom: 2rem;">
                     <label for="description" style="display: block; font-weight: bold; color: var(--blue); margin-bottom: 0.5rem;">
@@ -363,6 +376,7 @@
                                     data-client-name="{{ $project->client_name }}"
                                     data-category="{{ $project->category }}"
                                     data-video-url="{{ $project->video_url }}"
+                                    data-model-embed="{{ e($project->model_embed) }}"
                                     data-skills='@json($project->skills->pluck("id"))'
                                     style="flex: 1; background: var(--blue); color: white; padding: 0.5rem; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9rem; text-decoration: none;">
                                     <i class="fas fa-edit"></i> Edit
@@ -501,6 +515,17 @@
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <div>
+                    <label for="editModelEmbed" style="display: block; font-weight: bold; color: var(--blue); margin-bottom: 0.5rem;">
+                        3D Embed Code
+                    </label>
+                    <textarea
+                        id="editModelEmbed"
+                        name="model_embed"
+                        style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 0.9rem; min-height: 100px; font-family: monospace; box-sizing: border-box; resize: vertical;"></textarea>
+                    <small style="color: #666; display: block; margin-top: 0.25rem;">Paste the embed HTML from Sketchfab or similar (iframe snippet).</small>
                 </div>
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
@@ -662,6 +687,7 @@
                 editProgressValue.textContent = progressValue + '%';
                 editProgressBarFill.style.width = progressValue + '%';
             }
+            document.getElementById('editModelEmbed').value = button.dataset.modelEmbed || '';
             document.getElementById('editClientName').value = button.dataset.clientName || '';
             document.getElementById('editCategory').value = button.dataset.category || '';
             document.getElementById('editVideoUrl').value = button.dataset.videoUrl || '';

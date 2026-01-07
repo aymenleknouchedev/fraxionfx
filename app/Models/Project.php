@@ -19,6 +19,7 @@ class Project extends Model
         'video_url',
         'video',
         'model_file',
+        'model_embed',
         'project_date',
         'project_duration',
         'client_name',
