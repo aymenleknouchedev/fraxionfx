@@ -244,6 +244,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/examples/js/loaders/OBJLoader.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/examples/js/libs/inflate.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/examples/js/loaders/FBXLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/examples/js/loaders/GLTFLoader.js"></script>
 
     <script>
         (function () {
@@ -321,6 +322,15 @@
             } else if (ext === 'fbx' && THREE.FBXLoader) {
                 const loader = new THREE.FBXLoader();
                 loader.load(modelUrl, onModelLoaded, undefined, function () { onModelError('Could not load FBX model.'); });
+            } else if ((ext === 'gltf' || ext === 'glb') && THREE.GLTFLoader) {
+                const loader = new THREE.GLTFLoader();
+                loader.load(modelUrl, function (gltf) {
+                    if (gltf && gltf.scene) {
+                        onModelLoaded(gltf.scene);
+                    } else {
+                        onModelError('GLTF/GLB model loaded, but no scene was found.');
+                    }
+                }, undefined, function () { onModelError('Could not load GLTF/GLB model.'); });
             } else if (ext === 'blend') {
                 onModelError('BLEND files cannot be previewed in the browser viewer.');
             } else {
